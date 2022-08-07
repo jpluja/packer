@@ -1,0 +1,10 @@
+export PACKER_LOG_PATH=/app/packer/logs/log_build.log
+export PACKER_LOG=1
+export http_proxy=http://username1:xxxxxxx@proxy.jpluja.com:8080
+export https_proxy=http://username1:xxxxxxx@proxy.jpluja.com:8080
+#export PKR_VAR_subscription_id=$(az account show -o tsv --query 'id')
+#export PKR_VAR_tenant_id=$(az account show -o tsv --query 'tenantId')
+#export PKR_VAR_connection_password="xxxxxxxxxxxx"
+#export PKR_VAR_connection_password="xxxxxxxxxxxx"
+export PKR_VAR_aws_access_key_id="XXXXXXXXXXXXXX"
+export PKR_VAR_aws_secret_access_key="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
