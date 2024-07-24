@@ -1,0 +1,1 @@
+#packer build --var-file=redhat.pkrvars.hcl --var-file=vsphere.auto.pkrvars.hcl -debug --only vsphere-iso.redhat .

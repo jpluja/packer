@@ -6,6 +6,6 @@ vcenter_host       = "host1.vmware.jpluja.com"
 vcenter_datastore  = "VOL900_Content_Library"
 
 #crea la carpeta a vmware:
-vcenter_folder   = "WINDOWS-templates_2022"
+vcenter_folder   = "RHEL-templates_2022"
 #vcenter_password = ""
-vm_network       = "PRINCIPAL-SERVEI|NP-TPL|EPG-NP-U-TPL-T2"
+vm_network       = "MAIN_SERVICES-NPR|JP-PK-NP-TPL|EPG-NP-U-TPL-T2"

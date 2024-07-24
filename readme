@@ -1,0 +1,117 @@
+Private Cloud
+In this case will use an iso corresponding to every every SO version (windows or linux).
+
+will be used the builder vsperhe-iso.
+
+Important observation: This process is used when you don't have internet acces, you don't have dhcp. So you are in an intranet with restricted access. You're bitbucket access will be only your own bitbucket service.
+
+
+Example Commands:
+
+export PACKER_LOG=1
+export PACKER_LOG_PATH=/opt/packer/logs/build.log
+
+ISO="[Content_Library] isos/”
+NOM_TEMPLATE=" "${var.os_family}-${var.os_version}-{{ isotime \"2006-01-02\" }}" "
+
+packer validate -var-file= /opt/packer/templates_vmware_linux/redhat7/redhat7.pkrvars.hcl
+
+pwd:
+/opt/packer/templates_vmware_linux/redhat7/
+
+packer build --var-file redhat7.pkrvars.hcl --var-file=vsphere.auto.pkrvars.hcl -debug --only vsphere-iso.redhat7 .
+
+Files description:
+
+vsphere.pkr.hcl
+scripts
+variables.pkr.hcl
+vsphere.auto.pkrvars.hcl
+boot_config/redhat/ks.cfg
+redhat7.pkrvars.hcl
+
+In variables.pkr.hcl will be defined all variables used in the process.
+
+In vsphere.auto.pkrvars.hcl Vcenter access will be defined here.
+
+In redhat7.pkrvars.hcl specific data to define the template respect SO.
+
+In vsphere.pkr.hcl Main packer file for the process.
+
+In scripts directory we will put there all scripts we want to be used in the template creation.
+
+
+In boot_config/redhat/ks.cfg this is the kickstart file for Linux (Redhat in this case). This file is get from bitbucket during the process. If you change something in this file you have to push it to bitbucket (or gitlab or whatever tool you use) to get latest changes.
+
+
+
+
+Requirements:
+Software and Libraries
+Packer
+AWS cli v2
+VMware-iso
+Azure cli
+
+
+Example commands:
+
+[test@vmtest redhat7]# pwd
+/opt/packer/templates_vmware_linux/redhat7
+# packer build --var-file redhat7.pkrvars.hcl --var-file=vsphere.auto.pkrvars.hcl --only vsphere-iso.redhat7 .   (Be in mind the last dot with a space in middle)
+
+You can add -debug option to troubleshooting purposes for example.
+
+A file with passwords and sensitive data will be needed. For example as environment variables with root access only
+
+export PKR_VAR_vcenter_password=""
+export PKR_VAR_connection_password=""
+export PKR_VAR_winrm_password=""
+
+
+Provisioning
+
+For the correct run of Windows template with ansible, it is needed to add an step in the playbook (runonce) documented in Red Hat documentation.
+By this way you can configure correctly the VM with winrm and credssp at first start up.
+
+
+The partitioning disks are made between disks assignment and kickstart file.
+
+
+Ejemplos de ejecución:
+
+[test@vmtest windows2016]# pwd
+/opt/packer/templates_vmware_windows/windows2016
+[test@vmtest windows2016]# packer build --var-file windows.pkrvars.hcl --var-file=vsphere.auto.pkrvars.hcl --only vsphere-iso.windows2016 .
+vsphere-iso.windows2016: output will be in this color.
+
+==> vsphere-iso.windows2016: Creating VM...
+
+For Linux case:
+
+[test@vmtest redhat7]# source /root/vmware_packer_variables.sh
+[test@vmtest redhat7]# export PACKER_LOG_PATH=/opt/packer/logs/test_log_build.log
+[test@vmtest redhat7]# export PACKER_LOG=1
+[test@vmtest redhat7]# packer build --var-file redhat7.pkrvars.hcl --var-file=vsphere.auto.pkrvars.hcl -debug --only vsphere-iso.redhat7 .
+Debug mode enabled. Builds will not be parallelized.
+vsphere-iso.redhat7: output will be in this color.
+
+==> vsphere-iso.redhat7: Pausing after run of step 'StepConnect'. Press enter to continue.
+
+
+
+PUBLIC CLOUD:
+
+AWS:
+For the AWS case, it's basically the same of Vmware with an important difference.
+Wil not use an iso file as a source, but an image from marketplace.
+
+example:
+source_ami = "ami-xx0f1c02e5e4d9dxx"
+
+That image will be put in aws.pkr.hcl file.
+
+Another difference are the credentials used in AWS. Will be used an arn role
+So you need to create that role and give correct permissions. This is documented for AWS and also for packer.
+
+Once this is done, the execution is the same. Only to specify the correct passwords and variables in the file as an environment variables.
